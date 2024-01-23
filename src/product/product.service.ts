@@ -31,11 +31,26 @@ export class ProductService {
     return this.productsRepository.findOneBy({ id });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    try {
+      const productExist = await this.productsRepository.findOneBy({id});
+      if (!productExist) return {"success": false, "response": "product not exist"}
+      await this.productsRepository.update(id,updateProductDto);
+      const updated = await this.productsRepository.findOneBy({id});
+      return {"success": true, "response": updated}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
-  async remove(id: number): Promise<void> {
-    await this.productsRepository.delete(id);
+  async remove(id: number){
+    try {
+      const productExist = await this.productsRepository.findOneBy({id});
+      if (!productExist) return {"success": false, "response": "product not exist"}
+      await this.productsRepository.delete(id);
+      return {"success": true, "response": productExist}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 }
