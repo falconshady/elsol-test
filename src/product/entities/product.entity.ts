@@ -1,5 +1,10 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+enum ProductType {
+  PERECEDERO = 'PERECEDERO',
+  NO_PERECEDERO = 'NO_PERECEDERO',
+}
+
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn()
@@ -10,8 +15,11 @@ export class Product {
 
   @Column()
   price: number;
-
-  @Column()
+  
+  @Column({
+    type: 'enum',
+    enum: ProductType,
+  })
   type: string;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
