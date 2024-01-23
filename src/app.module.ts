@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { Product } from "./product/entities/product.entity";
 import { ProductModule } from "./product/product.module";
+import { Product } from "./product/entities/product.entity";
+import { StoreModule } from './store/store.module';
+import { Store } from "./store/entities/store.entity";
 
 @Module({ 
   imports: [
@@ -17,11 +17,12 @@ import { ProductModule } from "./product/product.module";
       username: process.env.DATABASE_USER || 'root',
       password: process.env.DATABASE_PASSWORD || 'root',
       database: process.env.DATABASE_NAME || 'elsoltest',
-      entities: [Product],
+      entities: [Product, Store],
       autoLoadEntities: true,
       synchronize: true,
     }),
-    ProductModule
+    ProductModule,
+    StoreModule
   ],
   controllers: [],
   providers: [],
