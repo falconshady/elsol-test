@@ -23,12 +23,22 @@ export class ProductService {
     }    
   }
 
-  findAll(): Promise<Product[]>{
-    return this.productsRepository.find();
+  async findAll(): Promise<Object> {
+    try {
+      const products = await this.productsRepository.find();
+      return {"success": true, "response": products}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
-  findOne(id: number): Promise<Product | null> {
-    return this.productsRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Object> {
+    try {
+      const products = await this.productsRepository.findOneBy({ id });
+      return {"success": true, "response": products}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
