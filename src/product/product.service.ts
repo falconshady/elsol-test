@@ -13,8 +13,14 @@ export class ProductService {
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
   ) {}
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  async create(createProductDto: CreateProductDto) {
+    try {
+      const product = this.productsRepository.create(createProductDto);
+      let created = await this.productsRepository.save(product);
+      return {"success": true, "response": created}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }    
   }
 
   findAll(): Promise<Product[]>{
