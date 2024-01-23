@@ -13,23 +13,54 @@ export class StoreService {
     @InjectRepository(Store)
     private storesRepository: Repository<Store>,
   ) {}
-  create(createStoreDto: CreateStoreDto) {
-    return 'This action adds a new store';
+  async create(createStoreDto: CreateStoreDto) {
+    try {
+      const store = this.storesRepository.create(createStoreDto);
+      let created = await this.storesRepository.save(store);
+      return {"success": true, "response": created}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
-  findAll() {
-    return this.storesRepository.find();
+  async findAll(): Promise<Object> {
+    try {
+      const stores = await this.storesRepository.find();
+      return {"success": true, "response": stores}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
-  findOne(id: number) {
-    return this.storesRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Object> {
+    try {
+      const stores = await this.storesRepository.findOneBy({ id });
+      return {"success": true, "response": stores}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
-    return `This action updates a #${id} store`;
+  async update(id: number, updateStoreDto: UpdateStoreDto) {
+    try {
+      const storeExist = await this.storesRepository.findOneBy({id});
+      if (!storeExist) return {"success": false, "response": "store not exist"}
+      await this.storesRepository.update(id,updateStoreDto);
+      const updated = await this.storesRepository.findOneBy({id});
+      return {"success": true, "response": updated}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 
-  async remove(id: number): Promise<void> {
-    await this.storesRepository.delete(id);
+  async remove(id: number){
+    try {
+      const storeExist = await this.storesRepository.findOneBy({id});
+      if (!storeExist) return {"success": false, "response": "store not exist"}
+      await this.storesRepository.delete(id);
+      return {"success": true, "response": storeExist}
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 }
