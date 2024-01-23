@@ -1,29 +1,33 @@
 import { Module } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as process from "process";
 
-@Module({
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { Product } from "./product/entities/product.entity";
+import { ProductModule } from "./product/product.module";
+
+@Module({ 
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      entities: [],
+      host: process.env.DATABASE_HOST || 'localhost',
+      port: parseInt(process.env.DATABASE_PORT) || 3306,
+      username: process.env.DATABASE_USER || 'root',
+      password: process.env.DATABASE_PASSWORD || 'root',
+      database: process.env.DATABASE_NAME || 'elsoltest',
+      entities: [Product],
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ProductModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  constructor() {
+    // console.log('AppModule constructor', process.env);
+  }
 }
