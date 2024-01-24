@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { StoreHasProductsService } from './store-has-products.service';
-import { CreateStoreHasProductDto } from './dto/create-store-has-product.dto';
-import { UpdateStoreHasProductDto } from './dto/update-store-has-product.dto';
 
 @Controller()
 export class StoreHasProductsController {
@@ -27,5 +25,14 @@ export class StoreHasProductsController {
     @Param('product_id') product_id: string
   ) {
     return this.storeHasProductsService.findStoreFromProduct(+product_id);
+  }
+
+  @Post('/association-update/products/:product_id_current/:product_id_new/store/:store_id')
+  updateStoresFromProduct(
+    @Param('product_id_current') product_id_current: string,
+    @Param('product_id_new') product_id_new: string,
+    @Param('store_id') store_id: string
+  ) {
+    return this.storeHasProductsService.updateStoresFromProduct(+product_id_current, +product_id_new, +store_id);
   }
 }

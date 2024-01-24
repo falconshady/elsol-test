@@ -32,11 +32,12 @@ export class StoreHasProductsService {
         product_id: product_id,
       });
       if (storeHasProductExist) return {"success": false, "response": "this association was saved previously"}
-      
-      this.storeHasProductsRepository.create({
+
+      const storeHasProduct = this.storeHasProductsRepository.create({
         "product_id": product_id,
         "store_id": store_id
       });
+      await this.storeHasProductsRepository.save(storeHasProduct);
       
       return {"success": true, "response": {
           "product": productExist,
@@ -85,6 +86,38 @@ export class StoreHasProductsService {
 
       return {"success": true, "response": {
           "store": store,
+        }
+      }
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
+  }
+
+  async updateStoresFromProduct(product_id_current: number, product_id_new: number, store_id: number) {
+    try {
+      const productCurrentExist = await this.productsRepository.findOneBy({"id":product_id_current});
+      if (!productCurrentExist) return {"success": false, "response": "product not exist"}
+
+      const productNewExist = await this.productsRepository.findOneBy({"id":product_id_new});
+      if (!productNewExist) return {"success": false, "response": "product not exist"}
+
+      const storeExist = await this.storesRepository.findOneBy({"id": store_id});
+      if (!storeExist) return {"success": false, "response": "store not exist"}
+
+      await this.storeHasProductsRepository.delete({
+        product_id: product_id_current
+      });
+
+      const storeHasProduct = this.storeHasProductsRepository.create({
+        "product_id": product_id_new,
+        "store_id": store_id
+      });
+      await this.storeHasProductsRepository.save(storeHasProduct);
+      
+      return {"success": true, "response": {
+          "store": storeExist,
+          "product": productNewExist,
+          "association_deleted": productCurrentExist,
         }
       }
     }catch (e){
