@@ -104,6 +104,12 @@ export class StoreHasProductsService {
       const storeExist = await this.storesRepository.findOneBy({"id": store_id});
       if (!storeExist) return {"success": false, "response": "store not exist"}
 
+      const storeHasProductExist = await this.storeHasProductsRepository.findOneBy({
+        store_id: store_id,
+        product_id: product_id_new,
+      });
+      if (storeHasProductExist) return {"success": false, "response": "this association was saved previously"}
+      
       await this.storeHasProductsRepository.delete({
         product_id: product_id_current
       });
