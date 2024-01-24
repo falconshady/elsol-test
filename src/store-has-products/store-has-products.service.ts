@@ -33,11 +33,11 @@ export class StoreHasProductsService {
       });
       if (storeHasProductExist) return {"success": false, "response": "this association was saved previously"}
       
-      const storeHasProduct = this.storeHasProductsRepository.create({
+      this.storeHasProductsRepository.create({
         "product_id": product_id,
         "store_id": store_id
       });
-      let created = await this.storeHasProductsRepository.save(storeHasProduct);
+      
       return {"success": true, "response": {
           "product": productExist,
           "store": storeExist,
@@ -48,19 +48,25 @@ export class StoreHasProductsService {
     }
   }
 
-  findAll() {
-    return `This action returns all storeHasProducts`;
-  }
+  async findStoresFromProduct(product_id: number) {
+    try {
+      const productExist = await this.productsRepository.findOneBy({"id":product_id});
+      if (!productExist) return {"success": false, "response": "product not exist"}
 
-  findOne(id: number) {
-    return `This action returns a #${id} storeHasProduct`;
-  }
+      const storeHasProduct = await this.storeHasProductsRepository.findBy({
+        product_id: product_id,
+      });
+      
+      let storeIds = storeHasProduct.map(assoc => assoc.store_id)
 
-  update(id: number, updateStoreHasProductDto: UpdateStoreHasProductDto) {
-    return `This action updates a #${id} storeHasProduct`;
-  }
+      const stores = await this.storesRepository.findByIds(storeIds);
 
-  remove(id: number) {
-    return `This action removes a #${id} storeHasProduct`;
+      return {"success": true, "response": {
+          "stores": stores,
+        }
+      }
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
   }
 }
