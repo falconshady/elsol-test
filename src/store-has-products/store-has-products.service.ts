@@ -116,8 +116,8 @@ export class StoreHasProductsService {
       
       return {"success": true, "response": {
           "store": storeExist,
-          "product": productNewExist,
-          "association_deleted": productCurrentExist,
+          "association_added": productNewExist,
+          "association_removed": productCurrentExist,
         }
       }
     }catch (e){
