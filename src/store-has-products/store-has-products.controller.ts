@@ -35,4 +35,12 @@ export class StoreHasProductsController {
   ) {
     return this.storeHasProductsService.updateStoresFromProduct(+product_id_current, +product_id_new, +store_id);
   }
+
+  @Delete('/delete/product/:product_id/store/:store_id')
+  deleteStoreFromProduct(
+    @Param('product_id') product_id: string,
+    @Param('store_id') store_id: string
+  ) {
+    return this.storeHasProductsService.deleteStoreFromProduct(+product_id, +store_id);
+  }
 }

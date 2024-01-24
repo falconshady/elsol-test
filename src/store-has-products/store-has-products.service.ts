@@ -130,4 +130,38 @@ export class StoreHasProductsService {
       return {"success": false, "response": e.sqlMessage, "errno": e.errno}
     }
   }
+
+  async deleteStoreFromProduct(product_id: number, store_id: number) {
+    try {
+
+      const productExist = await this.productsRepository.findOneBy({"id":product_id});
+      if (!productExist) return {"success": false, "response": "product not exist"}
+      
+      const storeExist = await this.storesRepository.findOneBy({"id": store_id});
+      if (!storeExist) return {"success": false, "response": "store not exist"}
+
+      const storeHasProductExist = await this.storeHasProductsRepository.findOneBy({
+        store_id: store_id,
+        product_id: product_id,
+      });
+      
+      if (storeHasProductExist){
+        await this.storeHasProductsRepository.delete({
+          store_id: store_id
+        });
+        await this.storesRepository.delete(store_id);
+        return {"success": true, "response": {
+            "store": storeExist,
+          }
+        }
+        
+      }
+      
+      return {"success": false, "response": "Uknown event"
+      }
+      
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
+  }
 }
