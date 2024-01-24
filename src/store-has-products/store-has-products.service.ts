@@ -69,4 +69,26 @@ export class StoreHasProductsService {
       return {"success": false, "response": e.sqlMessage, "errno": e.errno}
     }
   }
+
+  async findStoreFromProduct(product_id: number) {
+    try {
+      const productExist = await this.productsRepository.findOneBy({"id":product_id});
+      if (!productExist) return {"success": false, "response": "product not exist"}
+
+      const storeHasProduct = await this.storeHasProductsRepository.findOne({
+        where: {
+          product_id: product_id
+        }
+      });
+      
+      const store = await this.storesRepository.findOneById(storeHasProduct.id);
+
+      return {"success": true, "response": {
+          "store": store,
+        }
+      }
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
+  }
 }

@@ -21,4 +21,11 @@ export class StoreHasProductsController {
   ) {
     return this.storeHasProductsService.findStoresFromProduct(+product_id);
   }
+  
+  @Get('/find/product/:product_id/store')
+  findStoreFromProduct(
+    @Param('product_id') product_id: string
+  ) {
+    return this.storeHasProductsService.findStoreFromProduct(+product_id);
+  }
 }
