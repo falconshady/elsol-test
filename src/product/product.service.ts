@@ -34,8 +34,10 @@ export class ProductService {
 
   async findOne(id: number): Promise<Object> {
     try {
-      const products = await this.productsRepository.findOneBy({ id });
-      return {"success": true, "response": products}
+      const productExist = await this.productsRepository.findOneBy({ id });
+      if (!productExist) return {"success": false, "response": "product not exist"}
+      
+      return {"success": true, "response": productExist}
     }catch (e){
       return {"success": false, "response": e.sqlMessage, "errno": e.errno}
     }

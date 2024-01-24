@@ -34,8 +34,10 @@ export class StoreService {
 
   async findOne(id: number): Promise<Object> {
     try {
-      const stores = await this.storesRepository.findOneBy({ id });
-      return {"success": true, "response": stores}
+      const storeExist = await this.storesRepository.findOneBy({ id });
+      if (!storeExist) return {"success": false, "response": "store not exist"}
+      
+      return {"success": true, "response": storeExist}
     }catch (e){
       return {"success": false, "response": e.sqlMessage, "errno": e.errno}
     }
