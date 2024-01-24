@@ -38,7 +38,11 @@ export class StoreHasProductsService {
         "store_id": store_id
       });
       let created = await this.storeHasProductsRepository.save(storeHasProduct);
-      return {"success": true, "response": created}
+      return {"success": true, "response": {
+          "product": productExist,
+          "store": storeExist,
+        }
+      }
     }catch (e){
       return {"success": false, "response": e.sqlMessage, "errno": e.errno}
     }
