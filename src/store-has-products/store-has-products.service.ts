@@ -71,6 +71,28 @@ export class StoreHasProductsService {
     }
   }
 
+  async findProductsFromStore(store_id: number) {
+    try {
+      const storeExist = await this.storesRepository.findOneBy({"id":store_id});
+      if (!storeExist) return {"success": false, "response": "store not exist"}
+
+      const storeHasProduct = await this.storeHasProductsRepository.findBy({
+        store_id: store_id,
+      });
+
+      let productsIds = storeHasProduct.map(assoc => assoc.product_id)
+
+      const products = await this.productsRepository.findByIds(productsIds);
+
+      return {"success": true, "response": {
+          "products": products,
+        }
+      }
+    }catch (e){
+      return {"success": false, "response": e.sqlMessage, "errno": e.errno}
+    }
+  }
+
   async findStoreFromProduct(product_id: number) {
     try {
       const productExist = await this.productsRepository.findOneBy({"id":product_id});
